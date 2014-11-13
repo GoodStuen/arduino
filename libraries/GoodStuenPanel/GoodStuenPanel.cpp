@@ -173,18 +173,18 @@ void GoodStuenPanel::begin(void) {
   DATAPORT = 0;
 
   // GS:
-  // First two lines configure the timer interrupt settings.
+  // Timer1 is a 16-bit timer.
   // CS10 means use the system clock (don't scale it down) for the interrupt.
-  // The other bits (WGM13/12/11) set it to mode 14, which is described 
-  // on page 136 of ATMega328 datasheet.
-  // ICR1 is (somehow) the timer duration value, or how often it fires.
-  // We will need to convert this to the ARM equivalent of TC0 "timer counter".
+  // Setting WGM11/12/13 sets it to mode 14, Fast PMW mode with a TOP value stored in ICR1.
+  // ICR1 is the timer TOP value, which is the maximum set value of the counter.
+  // Note: TOP is the max timer value
+  // 
 
   // Set up Timer1 for interrupt:
   TCCR1A  = _BV(WGM11); // Mode 14 (fast PWM), OC1A off
   TCCR1B  = _BV(WGM13) | _BV(WGM12) | _BV(CS10); // Mode 14, no prescale
-  ICR1    = 100;
-  TIMSK1 |= _BV(TOIE1); // Enable Timer1 interrupt
+  ICR1    = 100; 
+  TIMSK1 |= _BV(TOIE1); // Enable Timer1 overflow interrupt
   sei();                // Enable global interrupts
 }
 
@@ -412,6 +412,8 @@ void GoodStuenPanel::dumpMatrix(void) {
 // -------------------- Interrupt handler stuff --------------------
 
 /*
+// GS: Timer1 (16-bit) overflow interrupt
+// Datasheet says don't actually have to clear TOV1 here - it happens automatically when overflow interrupt runs.
 ISR(TIMER1_OVF_vect, ISR_BLOCK) { // ISR_BLOCK important -- see notes later
   activePanel->updateDisplay();   // Call refresh func for active display
   TIFR1 |= TOV1;                  // Clear Timer1 interrupt flag
