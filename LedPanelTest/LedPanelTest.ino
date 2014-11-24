@@ -7,39 +7,44 @@
 // for Adafruit Industries.
 // BSD license, all text above must be included in any redistribution.
 
-#include <Adafruit_GFX.h>   // Core graphics library
-//#include <GoodStuenPanel.h> // Hardware-specific library
+//#include <gamma.h>
+//#include <Adafruit_GFX.h>   // Core graphics library
+#include <GoodStuenPanel.h> // Hardware-specific library
 
-#define CLK 8  // (OLD) MUST be on PORTB! (Use pin 11 on Mega)
-#define LAT A3
+#define R1 2
+#define G1 3
+#define B1 4
+#define R2 5
+#define G2 6
+#define B2 7
+#define CLK 8
 #define OE  9
-#define A   A0
-#define B   A1
-#define C   A2
-//GoodStuenPanel matrix(A, B, C, CLK, LAT, OE, false);
+#define A   10
+#define B   11
+#define C   12
+#define LAT 13
 
 void setup() {
-
   Serial.begin(9600);
-  Serial.println("Hi poo");
-  
-  pinMode(CLK, OUTPUT);
-  pinMode(LAT, OUTPUT);
-  pinMode(OE, OUTPUT);
-  pinMode(A, OUTPUT);
-  pinMode(B, OUTPUT);
-  pinMode(C, OUTPUT);
-  digitalWrite(CLK, LOW);
-  digitalWrite(LAT, LOW);
-  digitalWrite(OE, HIGH);
-  digitalWrite(A, LOW);
-  digitalWrite(B, LOW);
-  digitalWrite(C, LOW);
 
-  /*matrix.begin();
+  GoodStuenPanel matrix(R1, G1, B1, R2, G2, B2, A, B, C, CLK, LAT, OE, false);
+
+  // Testing interrupt - use LED
+  pinMode(13, OUTPUT);
+  
+  matrix.begin();
+  
+  while(1) {
+    //matrix.fillRect(0, 0, 32, 16, matrix.Color333(0, 7, 0));
+    //delay(1000);
+    //matrix.fillRect(0, 0, 32, 16, matrix.Color333(7, 0, 0));
+    //delay(1000);
+    matrix.fillRect(0, 0, 32, 16, matrix.Color333(0, 0, 7));
+    //delay(1000);
+  }
   
   // draw a pixel in solid white
-  matrix.drawPixel(0, 0, matrix.Color333(7, 7, 7)); 
+  /*matrix.drawPixel(0, 0, matrix.Color333(7, 7, 7)); 
   delay(2000);
 
   // fix the screen with green

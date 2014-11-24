@@ -1,7 +1,7 @@
 #ifndef _GAMMA_H_
 #define _GAMMA_H_
 
-//#include <avr/pgmspace.h>
+#include <Arduino.h>
 
 static const uint8_t PROGMEM gammaVals[] = {
   0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,

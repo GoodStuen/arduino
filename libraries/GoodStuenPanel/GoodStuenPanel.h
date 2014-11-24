@@ -6,11 +6,13 @@ class GoodStuenPanel : public Adafruit_GFX {
  public:
 
   // Constructor for 16x32 panel:
-  GoodStuenPanel(uint8_t a, uint8_t b, uint8_t c,
+  GoodStuenPanel(uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8_t b2,
+    uint8_t a, uint8_t b, uint8_t c,
     uint8_t sclk, uint8_t latch, uint8_t oe, boolean dbuf);
 
   // Constructor for 32x32 panel (adds 'd' pin):
-  GoodStuenPanel(uint8_t a, uint8_t b, uint8_t c, uint8_t d,
+  GoodStuenPanel(uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8_t b2,
+    uint8_t a, uint8_t b, uint8_t c, uint8_t d,
     uint8_t sclk, uint8_t latch, uint8_t oe, boolean dbuf);
 
   void
@@ -37,18 +39,22 @@ class GoodStuenPanel : public Adafruit_GFX {
   volatile boolean swapflag;
 
   // Init/alloc code common to both constructors:
-  void init(uint8_t rows, uint8_t a, uint8_t b, uint8_t c,
+  void init(uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8_t b2,
+    uint8_t rows, uint8_t a, uint8_t b, uint8_t c,
     uint8_t sclk, uint8_t latch, uint8_t oe, boolean dbuf);
 
   // PORT register pointers, pin bitmasks, pin numbers:
-  volatile uint8_t
-    *latport, *oeport, *addraport, *addrbport, *addrcport, *addrdport;
+  /*volatile long unsigned int
+    *sclkport, *latport, *oeport, *addraport, *addrbport, *addrcport, *addrdport;*/
   uint8_t
     sclkpin, latpin, oepin, addrapin, addrbpin, addrcpin, addrdpin,
-    _sclk, _latch, _oe, _a, _b, _c, _d;
+    _sclk, _latch, _oe, _a, _b, _c, _d, _r1, _g1, _b1, _r2, _g2, _b2;
 
   // Counters/pointers for interrupt handler:
   volatile uint8_t row, plane;
   volatile uint8_t *buffptr;
+
+  void startTimerCounter();
+  void updateTimerCounter(int ticks);
 };
 
