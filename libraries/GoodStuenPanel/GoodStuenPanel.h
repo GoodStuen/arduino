@@ -55,6 +55,5 @@ class GoodStuenPanel : public Adafruit_GFX {
   volatile uint8_t *buffptr;
 
   void startTimerCounter();
-  void updateTimerCounter(int ticks);
 };
 

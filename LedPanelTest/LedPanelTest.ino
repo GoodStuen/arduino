@@ -30,18 +30,25 @@ void setup() {
   GoodStuenPanel matrix(R1, G1, B1, R2, G2, B2, A, B, C, CLK, LAT, OE, false);
 
   // Testing interrupt - use LED
-  pinMode(13, OUTPUT);
+  //pinMode(13, OUTPUT); // LAT is also pin 13... so can't do this
   
   matrix.begin();
   
-  //while(1) {
-    //matrix.fillRect(0, 0, 32, 16, matrix.Color333(0, 7, 0));
-    //delay(1000);
-    matrix.fillRect(0, 0, 32, 16, matrix.Color333(7, 0, 0));
-    //delay(1000);
-    //matrix.fillRect(0, 0, 32, 16, matrix.Color333(0, 0, 7));
-    //delay(1000);
-  //}
+  matrix.drawPixel(0, 0, matrix.Color333(7, 7, 7));
+  delay(2000);
+  matrix.drawPixel(0, 0, matrix.Color333(7, 0, 0));
+  delay(2000);
+  matrix.drawPixel(0, 0, matrix.Color333(0, 7, 0));
+  //matrix.fillRect(0, 0, 32, 16, matrix.Color333(0, 7, 0));
+
+//  while(1) {
+//    matrix.fillRect(0, 0, 32, 16, matrix.Color333(0, 7, 0));
+//    delay(1000);
+//    matrix.fillRect(0, 0, 32, 16, matrix.Color333(7, 0, 0));
+//    delay(1000);
+//    matrix.fillRect(0, 0, 32, 16, matrix.Color333(0, 0, 7));
+//    delay(1000);
+//  }
   
   // draw a pixel in solid white
   /*matrix.drawPixel(0, 0, matrix.Color333(7, 7, 7)); 

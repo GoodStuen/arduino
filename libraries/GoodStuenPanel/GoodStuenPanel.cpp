@@ -387,56 +387,37 @@ void GoodStuenPanel::begin(void) {
 
   debugPrint("startTimerCounter, now!");
   startTimerCounter();
-  updateTimerCounter(42000000);
 }
 
 // -------------------- Interrupt handler stuff --------------------
 
 void GoodStuenPanel::startTimerCounter(void) {
-  debugPrint("startTimerCounter: disable write protect");
-	pmc_set_writeprotect(false); // Disable "write protect" of the PMC (Power Management Controller) registers
-	pmc_enable_periph_clk(ID_TC0); // Power up the clock for interrupt controller peripheral
-	TC_Configure(TC0, 0, TC_CMR_WAVE | TC_CMR_WAVSEL_UP | TC_CMR_TCCLKS_TIMER_CLOCK1);
-	uint32_t rc = VARIANT_MCK / 2; // 2 because we selected TIMER_CLOCK1 above
-	TC_SetRA(TC0, 0, rc / 2); //50% high, 50% low
-	TC_SetRC(TC0, 0, rc);
-	TC_Start(TC0, 0);
-	TC0->TC_CHANNEL[0].TC_IER = TC_IER_CPCS;
-	TC0->TC_CHANNEL[0].TC_IDR = ~TC_IER_CPCS;
-	NVIC_EnableIRQ(TC0_IRQn);
-	debugPrint("startTimerCounter: end");
+    debugPrint("startTimerCounter: disable write protect");
+    pmc_set_writeprotect(false); // Disable "write protect" of the PMC (Power Management Controller) registers
+    pmc_enable_periph_clk(ID_TC0); // Power up the clock for interrupt controller peripheral
+    
+    // Waveform mode | up mode with rc trigger | stop counter after trigger | use MCK/2 clock
+    TC_Configure(TC0, 0, TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC | TC_CMR_CPCSTOP | TC_CMR_TCCLKS_TIMER_CLOCK1);
+    // Using Timer_Clock1, so counting to VARIANT_MCK / 2 gives 1 second
+    TC_SetRC(TC0, 0, 1000); // Initial delay in ticks
+    TC_Start(TC0, 0);
+    TC0->TC_CHANNEL[0].TC_IER = TC_IER_CPCS;
+    TC0->TC_CHANNEL[0].TC_IDR = ~TC_IER_CPCS;
+    NVIC_EnableIRQ(TC0_IRQn);
+    debugPrint("startTimerCounter: end");
 }
 
-void GoodStuenPanel::updateTimerCounter(int ticks) {
-  uint32_t rc = ticks;
-	TC_SetRA(TC0, 0, rc / 2);
-	TC_SetRC(TC0, 0, rc);
-}
-
-int ledStatus = 0;
 // Handler for TC0 interrupt
 void TC0_Handler()
 {
-  Serial.println("fadf");
-
-  TC_GetStatus(TC0, 0); // Must do to handle interrupt
-	// don't change this area of code without also changing CALLOVERHEAD
-	activePanel->updateDisplay();
-	
-	// For test - toggle led on/off
-	digitalWrite(13, ledStatus);
-	ledStatus = !ledStatus;
-	debugPrint("TC0 Interrupt! Righ!");
+    debugPrint("TC0 Interrupt! START Righ!");
+    
+    TC_GetStatus(TC0, 0); // Must do to handle interrupt
+    // don't change this area of code without also changing CALLOVERHEAD
+    activePanel->updateDisplay();
+   
+    debugPrint("TC0 Interrupt! END Righ!");
 }
-
-/*
-// GS: Timer1 overflow interrupt
-// Datasheet says don't actually have to clear TOV1 here - it happens automatically when overflow interrupt runs.
-ISR(TIMER1_OVF_vect, ISR_BLOCK) { // ISR_BLOCK important -- see notes later
-  activePanel->updateDisplay();   // Call refresh func for active display
-  TIFR1 |= TOV1;                  // Clear Timer1 interrupt flag
-}
-*/
 
 // Two constants are used in timing each successive BCM interval.
 // These were found empirically, by checking the value of TCNT1 at
@@ -538,9 +519,9 @@ void GoodStuenPanel::updateDisplay(void) {
   // A local register copy can speed some things up:
   ptr = (uint8_t *)buffptr;
 
-
-  updateTimerCounter(duration); // Set interval for next interrupt (in timer ticks, not clocks! TIMER1 uses MCLK/2)
-  TC0->TC_CHANNEL[0].TC_CCR = TC_CCR_SWTRG;  // Restart interrupt timer
+  TC_SetRC(TC0, 0, duration); // Set interval for next interrupt (in timer ticks, not clocks!)
+  TC_Start(TC0, 0);           // Setting CPCSTOP bit in CMR register means we need to restart the timer ourselves
+  
   digitalWrite(_oe, LOW);    // Re-enable output
   digitalWrite(_latch, LOW); // Latch down
 
