@@ -34,14 +34,14 @@ void setup() {
   
   matrix.begin();
   
-  while(1) {
+  //while(1) {
     //matrix.fillRect(0, 0, 32, 16, matrix.Color333(0, 7, 0));
     //delay(1000);
-    //matrix.fillRect(0, 0, 32, 16, matrix.Color333(7, 0, 0));
+    matrix.fillRect(0, 0, 32, 16, matrix.Color333(7, 0, 0));
     //delay(1000);
-    matrix.fillRect(0, 0, 32, 16, matrix.Color333(0, 0, 7));
+    //matrix.fillRect(0, 0, 32, 16, matrix.Color333(0, 0, 7));
     //delay(1000);
-  }
+  //}
   
   // draw a pixel in solid white
   /*matrix.drawPixel(0, 0, matrix.Color333(7, 7, 7)); 
