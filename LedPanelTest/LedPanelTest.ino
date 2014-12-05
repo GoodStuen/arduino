@@ -32,13 +32,15 @@ void setup() {
   // Testing interrupt - use LED
   //pinMode(13, OUTPUT); // LAT is also pin 13... so can't do this
   
+  
+  
   matrix.begin();
   
   matrix.drawPixel(0, 0, matrix.Color333(7, 7, 7));
-  delay(2000);
+  /*delay(2000);
   matrix.drawPixel(0, 0, matrix.Color333(7, 0, 0));
   delay(2000);
-  matrix.drawPixel(0, 0, matrix.Color333(0, 7, 0));
+  matrix.drawPixel(0, 0, matrix.Color333(0, 7, 0));*/
   //matrix.fillRect(0, 0, 32, 16, matrix.Color333(0, 7, 0));
 
 //  while(1) {
